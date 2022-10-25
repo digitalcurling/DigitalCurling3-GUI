@@ -1,0 +1,35 @@
+#include "version.hpp"
+
+namespace digitalcurling3_gui {
+
+std::string GetVersion()
+{
+    return "@digitalcurling3_gui_VERSION@";
+}
+
+std::uint32_t GetVersionMajor()
+{
+    return @digitalcurling3_gui_VERSION_MAJOR@;
+}
+
+std::uint32_t GetVersionMinor()
+{
+    return @digitalcurling3_gui_VERSION_MINOR@;
+}
+
+std::uint32_t GetVersionPatch()
+{
+    return @digitalcurling3_gui_VERSION_PATCH@;
+}
+
+std::string GetGitSHA1()
+{
+    return "@DIGITALCURLING3_GUI_GIT_SHA1@";
+}
+
+std::string GetGitDate()
+{
+    return "@DIGITALCURLING3_GUI_GIT_DATE@";
+}
+
+} // namespace digitalcurling3_gui
