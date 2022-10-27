@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.22)
 
 project(digitalcurling3_gui
     VERSION 0.1.0
@@ -81,20 +81,17 @@ set(PROJECT_SOURCES
 
 
 # Qtを設定する
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
+find_package(Qt6 COMPONENTS Widgets LinguistTools REQUIRED)
+qt_standard_project_setup()
 
-if(${QT_VERSION_MAJOR} LESS 6)
-    message(ERROR "Use Qt6 or later")
-endif()
+qt_add_executable(digitalcurling3_gui ${PROJECT_SOURCES})
 
-qt_add_executable(digitalcurling3_gui MANUAL_FINALIZATION ${PROJECT_SOURCES})
 qt_add_translations(digitalcurling3_gui
   TS_FILES ${TS_FILES}
   LUPDATE_OPTIONS -locations none  # .tsファイルにファイル名を含めないようにする．参考: https://stackoverflow.com/a/29964486
 )
 
-target_link_libraries(digitalcurling3_gui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(digitalcurling3_gui PRIVATE Qt6::Widgets)
 
 set_target_properties(digitalcurling3_gui PROPERTIES
   MACOSX_BUNDLE_GUI_IDENTIFIER minerva.cs.uec.ac.jp
@@ -102,18 +99,11 @@ set_target_properties(digitalcurling3_gui PROPERTIES
   MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 )
 
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(digitalcurling3_gui)
-endif()
-
 
 
 # Digital Curling Library
-add_subdirectory(extern/DigitalCurling3)
-target_link_libraries(digitalcurling3_gui
-  PRIVATE
-    digitalcurling3::digitalcurling3
-)
+add_subdirectory(extern/DigitalCurling3 EXCLUDE_FROM_ALL)
+target_link_libraries(digitalcurling3_gui PRIVATE digitalcurling3::digitalcurling3)
 
 
 # 自動生成されるファイルからのインクルードがうまくいくように src ディレクトリをインクルードディレクトリにする．
@@ -137,3 +127,16 @@ qt_add_resources(digitalcurling3_gui "images"
     images/hammer.svg
     images/no_hammer.svg
 )
+
+
+install(TARGETS digitalcurling3_gui
+    BUNDLE  DESTINATION .
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+qt_generate_deploy_app_script(
+    TARGET digitalcurling3_gui
+    FILENAME_VARIABLE DIGITALCURLING3_GUI_DEPLOY_SCRIPT
+    NO_UNSUPPORTED_PLATFORM_ERROR
+)
+install(SCRIPT ${DIGITALCURLING3_GUI_DEPLOY_SCRIPT})
