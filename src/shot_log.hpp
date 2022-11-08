@@ -2,12 +2,11 @@
 #define DIGITALCURLING3_GUI_SHOT_LOG_HPP
 
 #include <cstdint>
-#include <string_view>
 #include <array>
 #include <vector>
 #include <chrono>
 #include <optional>
-#include <filesystem>
+#include <QString>
 #include "digitalcurling3/digitalcurling3.hpp"
 
 namespace digitalcurling3_gui {
@@ -15,7 +14,7 @@ namespace digitalcurling3_gui {
 class ShotLog
 {
 public:
-    ShotLog(std::filesystem::path const& file_name);
+    ShotLog(QString const& file_name);
 
     float secondsPerFrame() const { return seconds_per_frame_; }
 

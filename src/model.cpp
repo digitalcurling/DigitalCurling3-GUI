@@ -4,6 +4,7 @@
 #include <QStringBuilder>
 #include <QSettings>
 #include <QDebug>
+#include <QDir>
 
 #include "settings.hpp"
 #include "coord.hpp"
@@ -160,7 +161,7 @@ int Model::turnsPerEnd() const
 std::optional<QString> Model::simulatorType() const
 {
     if (game_log_) {
-        return QString::fromStdString(game_log_->simulatorType());
+        return game_log_->simulatorType();
     } else {
         return std::nullopt;
     }
@@ -280,7 +281,6 @@ Model::AnimInfo Model::animInfo() const
 std::array<std::chrono::milliseconds, 2> const& Model::thinkingTimeRemaining() const
 {
     if (game_log_) {
-        // TODO
         auto turn_index = GetTurnIndex(end_, shot_) + 1;
         if (end_start_) {
             --turn_index;  // エンド開始時は前のターンの情報とする (もっとスマートな解決法があればいいけど．．．)
@@ -355,11 +355,8 @@ void Model::openLog(QString const& file_name)
     resetAll();
 
     try {
-        std::filesystem::path file_name_path = file_name.toStdString();
-        file_dir_ = file_name_path;
-        file_dir_.remove_filename();
 
-        game_log_ = std::make_unique<GameLog>(file_name_path);
+        game_log_ = std::make_unique<GameLog>(file_name);
 
         if (game_log_->gameStates().size() <= 1) {
             // この時はエラーとする
@@ -371,11 +368,12 @@ void Model::openLog(QString const& file_name)
         // game_log 関連メンバの読み込み
         dirty_flag_.game_log = true;
         file_name_ = file_name;
+        file_dir_ = QFileInfo(file_name).absolutePath();
         protocol_version_ = QString("%1.%2").arg(game_log_->protocolVersionMajor(), game_log_->protocolVersionMinor());
-        team_name_[0] = QString::fromStdString(game_log_->teamNames()[0]);
-        team_name_[1] = QString::fromStdString(game_log_->teamNames()[1]);
-        game_id_ = QString::fromStdString(game_log_->gameId());
-        date_time_ = QString::fromStdString(game_log_->dateTime());
+        team_name_[0] = game_log_->teamNames()[0];
+        team_name_[1] = game_log_->teamNames()[1];
+        game_id_ = game_log_->gameId();
+        date_time_ = game_log_->dateTime();
 
         // turn_state_ の読み込み
         dirty_flag_.turn = true;
@@ -744,9 +742,6 @@ void Model::setTurnCore(int end, int shot, bool end_start, bool force_reload)
     shot_ = shot;
     end_start_ = end_start;
 
-    // TODO turn_state_ へロード
-
-
     // stone_info_ の更新
     if (end_start) {
         for (auto & team_si : stones_info_) {
@@ -780,12 +775,12 @@ void Model::setTurnCore(int end, int shot, bool end_start, bool force_reload)
     if (!end_start) {
         try {
             // ショットログファイル名を作成
-            std::ostringstream file_name_buf;
-            file_name_buf << "shot_e" << std::setw(3) << std::setfill('0') << end
-                << "s" << std::setw(2) << std::setfill('0') << shot << ".json";
+            QString file_name = QString("shot_e%1s%2.json")
+                    .arg(end, 3, 10, QChar('0'))
+                    .arg(shot, 2, 10, QChar('0'));
 
             // ロード
-            shot_log_ = std::make_unique<ShotLog>(file_dir_ / file_name_buf.str());
+            shot_log_ = std::make_unique<ShotLog>(QDir(file_dir_).filePath(file_name));
 
         } catch (std::exception & e) {
             emit errorOccured("Error on opening shot log: " % QString::fromLatin1(e.what()));

@@ -110,7 +110,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->scoreTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->scoreTableView->setFocusPolicy(Qt::NoFocus);
     ui->scoreTableView->setSelectionMode(QAbstractItemView::NoSelection);
-    ui->scoreTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed); // リサイズ禁止
+    // ui->scoreTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed); // リサイズ禁止
     ui->scoreTableView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);   // リサイズ禁止
     ui->scoreTableView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn); // 水平スクロールバーは常に表示する
     ui->scoreTableView->setModel(&score_table_model_);

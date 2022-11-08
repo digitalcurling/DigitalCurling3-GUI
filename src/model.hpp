@@ -160,7 +160,7 @@ private:  // ---
     // --- game_log ---
     std::unique_ptr<GameLog> game_log_;
     QString file_name_;
-    std::filesystem::path file_dir_;
+    QString file_dir_;
     QString protocol_version_;
     std::array<QString, 2> team_name_;
     QString game_id_;

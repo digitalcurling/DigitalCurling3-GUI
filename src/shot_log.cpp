@@ -1,6 +1,7 @@
 #include "shot_log.hpp"
 #include <fstream>
 #include <QDebug>
+#include <QFile>
 #include "coord.hpp"
 
 namespace dc = digitalcurling3;
@@ -19,18 +20,21 @@ dc::GameState::Stones StonesFromJson(nlohmann::json const& j)
 
 } // unnamed namespace
 
-ShotLog::ShotLog(std::filesystem::path const& file_name)
+ShotLog::ShotLog(QString const& file_name)
     : seconds_per_frame_(0.f)
     , frames_()
     , finish_()
 {
-    std::ifstream file(file_name);
-    if (!file) {
+    QFile file(file_name);
+
+    if (!file.open(QIODevice::ReadOnly)) {
         throw std::runtime_error("file open failed");
     }
 
-    nlohmann::json j;
-    file >> j;
+    QByteArray bytes = file.readAll();
+    std::string file_str = bytes.toStdString();
+
+    nlohmann::json j = nlohmann::json::parse(file_str);
 
     auto const& j_log = j.at("log");
     auto const end = j_log.at("end").get<uint8_t>();
