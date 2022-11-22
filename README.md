@@ -2,13 +2,17 @@
 
 このリポジトリではDigitalCurling3に対応したGUIを提供します．
 
-使用方法については [GUIマニュアル](https://github.com/digitalcurling/DigitalCurling3/wiki/GUI) を参照ください．
+使用方法については [GUIマニュアル](https://github.com/digitalcurling/DigitalCurling3/wiki/GUI%E3%83%9E%E3%83%8B%E3%83%A5%E3%82%A2%E3%83%AB) を参照ください．
 
 ## 機能
 
 - サーバーが出力した対戦ログの再生
 - (未実装) 人間用の対戦クライアント
 - (未実装) 対戦サーバーの対戦途中状態の表示
+
+## ダウンロード
+
+[リリースページ](https://github.com/digitalcurling/DigitalCurling3-GUI/releases)からダウンロードしてください．
 
 ## ビルド
 
