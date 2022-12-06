@@ -49,7 +49,7 @@ void SheetDrawer::prepare(ShotLog const* shot_log, float current_time, digitalcu
 
     // 負の数になる可能性があるため，負も含む整数としている．
     auto const idx_temp = static_cast<std::int64_t>(std::round((current_time - mod) / seconds_per_frame));
-    index_ = static_cast<size_t>(std::max(0ll, idx_temp));
+    index_ = static_cast<size_t>(std::max(static_cast<decltype(idx_temp)>(0), idx_temp));
 
     assert(frames.size() > 0);
     if (finish) {
